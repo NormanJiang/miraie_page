@@ -5,9 +5,21 @@ export const languages = [
   { code: "ja", locale: "ja", label: "日本語", mark: "あ" },
 ];
 export const messages = {
+  "Translation pending": [
+    "此语言版本暂未提供，以下显示已有版本。",
+    "This translation is not available yet; an existing version is shown below.",
+    "この言語の翻訳はまだありません。以下に既存の言語版を表示します。",
+  ],
+  "Loading article": ["正在加载正文…", "Loading article…", "本文を読み込み中…"],
+  "Article load error": [
+    "正文加载失败，请刷新页面重试。",
+    "The article could not load. Please refresh and try again.",
+    "本文を読み込めませんでした。ページを再読み込みしてください。",
+  ],
   "Study review": ["学习复盘", "Study review", "学習の振り返り"],
   "Read note": ["阅读笔记", "Read note", "ノートを読む"],
   Updated: ["更新于", "Updated", "更新日"],
+  Published: ["发布于", "Published", "公開日"],
   "Source note": ["查看原始记录", "View source note", "元の記録を見る"],
   "Source notes": ["原始学习记录", "Original study records", "元の学習記録"],
   "Notion access note": [

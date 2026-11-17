@@ -733,6 +733,18 @@ footer > div {
 footer a {
   color: var(--muted);
 }
+footer > .mobile-footer-links {
+  display: none;
+}
+@media (max-width: 1000px) {
+  footer > .mobile-footer-links {
+    display: flex;
+    gap: 16px;
+  }
+  footer > .desktop-footer-links {
+    display: none;
+  }
+}
 footer p {
   line-height: 2.1;
   margin: 0;
@@ -1518,9 +1530,7 @@ svg text {
   border-radius: 22px;
   overflow: hidden;
   box-shadow: 0 0 0 1px var(--line);
-  transition:
-    transform 0.35s,
-    box-shadow 0.35s;
+  transition: transform 0.35s;
 }
 .sidebar-portrait img {
   display: block;
@@ -1534,7 +1544,6 @@ svg text {
 .sidebar-portrait:hover,
 .sidebar-portrait:focus-visible {
   transform: scale(1.025);
-  box-shadow: 0 12px 28px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 .sidebar-portrait:hover img,
 .sidebar-portrait:focus-visible img {
@@ -1723,6 +1732,53 @@ svg text {
 }
 .note-sources {
   margin-bottom: 32px;
+}
+.markdown-body {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.markdown-body > h2 {
+  border-top: 1px solid var(--line);
+  padding-top: 30px;
+  margin-top: 38px;
+  line-height: 1.5;
+}
+.markdown-body img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 14px;
+  margin: 24px auto;
+}
+.markdown-body blockquote {
+  margin: 26px 0;
+  padding: 16px 22px;
+  border-left: 3px solid var(--accent);
+  background: var(--card);
+  font-size: 14px;
+}
+.markdown-body blockquote p {
+  margin: 0;
+}
+.markdown-body li {
+  margin: 10px 0;
+  line-height: 1.85;
+}
+.markdown-body pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 18px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.markdown-body :not(pre) > code {
+  padding: 2px 5px;
+  background: var(--card);
+  border-radius: 4px;
+}
+.markdown-body [lang="ja"] {
+  font-family: "Miraie Japanese", "Miraie Chinese", sans-serif;
 }
 .study-note [lang="ja"] {
   font-family: "Miraie Japanese", "Miraie Chinese", sans-serif;

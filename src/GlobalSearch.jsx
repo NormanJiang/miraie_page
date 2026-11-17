@@ -12,7 +12,32 @@ export default function GlobalSearch({ t, route, language }) {
   const [open, setOpen] = useState(false);
   const root = useRef(null);
   const input = useRef(null);
-  const results = searchContent(query, language);
+  const [results, setResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState(false);
+  useEffect(() => {
+    let active = true;
+    setResults([]);
+    setSearchError(false);
+    if (!query.trim()) {
+      setSearching(false);
+      return;
+    }
+    setSearching(true);
+    searchContent(query, language)
+      .then((items) => {
+        if (active) setResults(items);
+      })
+      .catch(() => {
+        if (active) setSearchError(true);
+      })
+      .finally(() => {
+        if (active) setSearching(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [query, language]);
   useEffect(() => {
     setOpen(false);
   }, [route]);
@@ -87,7 +112,15 @@ export default function GlobalSearch({ t, route, language }) {
           <div className="results-heading" role="status">
             {t("Search results count", { count: results.length })}
           </div>
-          {results.length ? (
+          {searching ? (
+            <p className="search-empty" role="status">
+              {t("Loading article")}
+            </p>
+          ) : searchError ? (
+            <p className="search-empty" role="alert">
+              {t("Article load error")}
+            </p>
+          ) : results.length ? (
             <ul>
               {results.map((item) => (
                 <li key={item.id}>

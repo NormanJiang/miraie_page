@@ -1,5 +1,6 @@
-import { posts, projects, profile, shelves } from "./data.js";
-import { studyNotes, noteTranslation, noteSearchText } from "./studyNotes.js";
+import { profile, shelves } from "./data.js";
+import { studyNotes, noteTranslation } from "./studyNotes.js";
+import { localizedContent } from "./content.js";
 
 // Escape literal query terms so punctuation is never interpreted as a regex.
 export function highlightParts(text, query) {
@@ -21,30 +22,39 @@ export function highlightParts(text, query) {
 }
 
 // Derived from authored content: newly added posts and projects are indexed automatically.
-export function contentIndex(language = "en") {
+export async function contentIndex(language = "en") {
+  const { default: index } = await import("virtual:content-search");
+  const text = (kind, id, lang) =>
+    index.find(
+      (item) => item.kind === kind && item.id === id && item.language === lang,
+    )?.text || "";
+  const posts = localizedContent("blog", language);
+  const projects = localizedContent("projects", language);
   return [
     ...studyNotes.map((note) => {
       const copy = noteTranslation(note, language);
       return {
         id: `note-${note.id}`,
         title: copy.title,
-        text: noteSearchText(copy),
+        text: copy.summary + " " + text("notes", note.id, copy.language),
         href: `#/note/${note.id}`,
         type: "Notes",
-        language: language === "zh" ? "zh-CN" : language,
+        language: copy.language === "zh" ? "zh-CN" : copy.language,
       };
     }),
     ...posts.map((p) => ({
       id: `post-${p.id}`,
       title: p.title,
-      text: [p.summary, ...p.body.flat(), ...p.tags].join(" "),
+      text: [p.summary, text("blog", p.id, p.language), ...p.tags].join(" "),
+      language: p.language === "zh" ? "zh-CN" : p.language,
       href: `#/post/${p.id}`,
       type: "Blog",
     })),
     ...projects.map((p) => ({
       id: `project-${p.id}`,
       title: p.title,
-      text: `${p.description} ${p.body}`,
+      text: `${p.description} ${text("projects", p.id, p.language)}`,
+      language: p.language === "zh" ? "zh-CN" : p.language,
       href: `#/project/${p.id}`,
       type: "Projects",
     })),
@@ -72,10 +82,10 @@ export function contentIndex(language = "en") {
     },
   ];
 }
-export function searchContent(query, language = "en") {
+export async function searchContent(query, language = "en") {
   const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
   if (!terms.length) return [];
-  return contentIndex(language)
+  return (await contentIndex(language))
     .map((item) => {
       const title = item.title.toLocaleLowerCase();
       const body = item.text.toLocaleLowerCase();

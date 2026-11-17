@@ -6,13 +6,17 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
-    "preview": "vite preview --host 127.0.0.1"
+    "preview": "vite preview --host 127.0.0.1",
+    "check:content": "node scripts/check-content.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^15.0.3",
+    "sanitize-html": "^2.18.2",
     "vite": "^7.2.0"
   }
 }

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { profile, posts, shelves, projects } from "./data";
+import { profile, shelves } from "./data";
+import { localizedContent } from "./content";
+import MarkdownBody from "./MarkdownBody";
 import "./styles.css";
 import { languages, translator } from "./i18n";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -109,6 +111,8 @@ function App() {
       navigator.languages?.[0] || navigator.language,
     );
   });
+  const posts = localizedContent("blog", language);
+  const projects = localizedContent("projects", language);
   function selectLanguage(value) {
     setLanguage(value);
     try {
@@ -190,7 +194,9 @@ function App() {
           <a className="post-row" href={`#/post/${p.id}`} key={p.id}>
             <span className="post-icon">{p.icon}</span>
             <span className="post-info">
-              <strong lang="zh-CN">{p.title}</strong>
+              <strong lang={p.language === "zh" ? "zh-CN" : p.language}>
+                {p.title}
+              </strong>
               <time dateTime={p.date}>
                 {new Date(p.date + "T12:00:00").toLocaleDateString(
                   languages.find((item) => item.code === language).locale,
@@ -262,8 +268,10 @@ function App() {
               <span>{t(p.year)}</span>
               <span>{p.icon}</span>
             </div>
-            <h3 lang="zh-CN">{p.title}</h3>
-            <p lang="zh-CN">{p.description}</p>
+            <h3 lang={p.language === "zh" ? "zh-CN" : p.language}>{p.title}</h3>
+            <p lang={p.language === "zh" ? "zh-CN" : p.language}>
+              {p.description}
+            </p>
             <span className="project-link">
               {t(p.status)} <span>↗</span>
             </span>
@@ -389,7 +397,7 @@ function App() {
           ))}
         </div>
         <div className="archive-title">
-          <h2>2026</h2>
+          <h2>{t("All Posts")}</h2>
           <span>{t("postCount", { count: filtered.length })}</span>
         </div>
         {filtered.length ? (
@@ -539,11 +547,12 @@ function App() {
         <a className="breadcrumb" href="#/blog">
           ← {t("All Posts")}
         </a>
-        <div className="article-meta">
-          {p.date} · {t("示例文章")} · {t("2 min read")}
-        </div>
-        <h1 lang="zh-CN">{p.title}</h1>
-        <p className="subtitle" lang="zh-CN">
+        <div className="article-meta">{p.date}</div>
+        <h1 lang={p.language === "zh" ? "zh-CN" : p.language}>{p.title}</h1>
+        <p
+          className="subtitle"
+          lang={p.language === "zh" ? "zh-CN" : p.language}
+        >
           {p.summary}
         </p>
         <div className="article-tags">
@@ -553,12 +562,7 @@ function App() {
             </a>
           ))}
         </div>
-        {p.body.map(([h, t]) => (
-          <div key={h} lang="zh-CN">
-            <h2>{h}</h2>
-            <p>{t}</p>
-          </div>
-        ))}
+        <MarkdownBody copy={p} language={language} t={t} />
         <div className="article-end">{t("✦ Thanks for reading.")}</div>
       </article>
     );
@@ -572,10 +576,15 @@ function App() {
         <h1>
           {p.icon} {p.title}
         </h1>
-        <p className="subtitle">{p.description}</p>
+        <p
+          className="subtitle"
+          lang={p.language === "zh" ? "zh-CN" : p.language}
+        >
+          {p.description}
+        </p>
         <span className="badge">{t(p.status)}</span>
         <h2>{t("About the project")}</h2>
-        <p lang="zh-CN">{p.body}</p>
+        <MarkdownBody copy={p} language={language} t={t} />
       </article>
     );
   } else
@@ -753,7 +762,25 @@ function App() {
       <main id="main" tabIndex="-1">
         {content}
         <footer>
-          <div>
+          <div className="mobile-footer-links">
+            <a
+              href="#/resume"
+              aria-current={page === "resume" ? "page" : undefined}
+            >
+              {t("Resume")}
+            </a>
+            <span aria-hidden="true">/</span>
+            <a href="#/notes">{t("Notes")}</a>
+            <span aria-hidden="true">/</span>
+            <a
+              href="https://github.com/NormanJiang/Homepage_Miraie"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t("Source")}
+            </a>
+          </div>
+          <div className="desktop-footer-links">
             <a href="#/blog">{t("Blog")}</a>
             <a href="#/projects">{t("Projects")}</a>
             <button
